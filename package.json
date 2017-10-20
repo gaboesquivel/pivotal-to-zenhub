@@ -1,0 +1,37 @@
+{
+  "name": "pivotal-to-github",
+  "version": "0.0.1",
+  "description": "Transfers issues from Pivotal to ZenHub",
+  "main": "lib/index.js",
+  "homepage": "https://github.com/gaboesquivel/pivotal-to-zenhub",
+  "bin": "bin/pivotal-to-github",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gaboesquivel/pivotal-to-zenhub.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gaboesquivel/pivotal-to-zenhub/issues"
+  },
+  "scripts": {
+    "test": "standard"
+  },
+  "author": "Gabo Esquivel - gaboesquivel.com",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "commander": "^2.9.0",
+    "function-rate-limit": "^1.0.1",
+    "github": "^0.2.4",
+    "lodash": "^3.10.1",
+    "octokat": "^0.4.15",
+    "p-all": "^1.0.0",
+    "pivotaltracker": "^0.1.4",
+    "progress": "^1.1.8",
+    "read": "^1.0.7",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2"
+  },
+  "devDependencies": {
+    "standard": "^10.0.3"
+  }
+}

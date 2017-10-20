@@ -1,0 +1,169 @@
+#!/usr/bin/env node
+const _ = require('lodash')
+const assert = require('assert')
+const childProcess = require('child_process')
+const path = require('path')
+const pivotalToZenhub = require('..')
+const program = require('commander')
+const read = require('read')
+
+const AssertionError = assert.AssertionError
+
+program
+  .usage('[options]')
+  .option('--pivotal-token <token>', 'The Pivotal API token to use')
+  .option('--pivotal-id <id>', 'The ID of the Pivotal Project to migrate')
+  .option('--github-token <token>', 'The GitHub API token to use')
+  .option('--github-user <user>', 'The GitHub User/Org to migrate to')
+  .option('--github-repo <repo>', 'The GitHub Repository to migrate to')
+  .option('--zenhub-token <token>', 'The ZenHub API token to use')
+  .parse(process.argv)
+
+function onError (err) {
+  if (err instanceof AssertionError) {
+    console.error('ERROR:', err.message || err)
+    console.error('See `pivotal-to-github --help` for usage')
+    process.exit(2)
+  } else if (process.env.NODE_ENV !== 'development') {
+    console.error('ERROR:', err.message || err)
+    process.exit(1)
+  } else {
+    throw err
+  }
+}
+
+try {
+  readMissingProgram(program, function (err, program) {
+    if (err) return onError(err)
+    pivotalToZenhub(program, onError)
+  })
+} catch (err) {
+  onError(err)
+}
+
+function readMissingProgram (program, cb) {
+  if (!program.githubToken) {
+    const fallback =
+      process.env.GITHUB_TOKEN || process.env.GITHUB_API_TOKEN
+    const fallbackText =
+      fallback ? '(load from ENV):' : '(open github.com):'
+    return read({
+      prompt: 'GitHub token ' + fallbackText
+    }, function (err, token) {
+      if (!token) {
+        if (fallback) {
+          token = fallback
+          console.log('--> Using ' + _.repeat('*', token.length - 4) + token.slice(-4))
+        } else {
+          console.error('Not implemented')
+          return
+        }
+      }
+
+      program.githubToken = token
+      readMissingProgram(program, cb)
+    })
+  }
+
+  if (!program.githubRepo) {
+    const fallback = path.basename(process.cwd())
+    return read({
+      prompt: 'GitHub repository (' + fallback + '): '
+    }, function (err, repo) {
+      if (!repo) {
+        repo = fallback
+        console.log('--> Using ' + repo)
+      }
+
+      program.githubRepo = repo
+      readMissingProgram(program, cb)
+    })
+  }
+
+  if (!program.githubUser) {
+    let fallback
+    try {
+      fallback = childProcess
+        .execSync('git config --get user.name')
+        .toString()
+        .split('\n')[0]
+    } catch (err) { }
+    const fallbackText = fallback ? ' (' + fallback + ')' : ''
+
+    return read({
+      prompt: 'GitHub user or organization' + fallbackText + ': '
+    }, function (err, user) {
+      if (!user) {
+        if (!fallback) {
+          return cb(new Error('Can\'t go on without an user'))
+        }
+        user = fallback
+        console.log('--> Using ' + user)
+      }
+
+      program.githubUser = user
+      readMissingProgram(program, cb)
+    })
+  }
+
+  if (!program.pivotalId) {
+    return read({
+      prompt: 'Pivotal Project ID: '
+    }, function (err, id) {
+      if (!id) {
+        return cb(new Error('Can\'t go on without the Pivotal Project ID'))
+      }
+
+      program.pivotalId = id
+      readMissingProgram(program, cb)
+    })
+  }
+
+  if (!program.pivotalToken) {
+    const fallback =
+      process.env.PIVOTAL_TOKEN || process.env.PIVOTAL_API_TOKEN
+    const fallbackText =
+      fallback ? '(load from ENV):' : '(open pivotaltracker.com):'
+    return read({
+      prompt: 'Pivotal token ' + fallbackText
+    }, function (err, token) {
+      if (!token) {
+        if (fallback) {
+          token = fallback
+          console.log('--> Using ' + _.repeat('*', token.length - 4) + token.slice(-4))
+        } else {
+          console.error('Not implemented')
+          return
+        }
+      }
+
+      program.pivotalToken = token
+      readMissingProgram(program, cb)
+    })
+  }
+
+  if (!program.zenhubToken) {
+    const fallback =
+      process.env.ZENHUB_TOKEN || process.env.ZENHUB_API_TOKEN
+    const fallbackText =
+      fallback ? '(load from ENV):' : '(open zenhub.com):'
+    return read({
+      prompt: 'ZenHub token ' + fallbackText
+    }, function (err, token) {
+      if (!token) {
+        if (fallback) {
+          token = fallback
+          console.log('--> Using ' + _.repeat('*', token.length - 4) + token.slice(-4))
+        } else {
+          console.error('Not implemented')
+          return
+        }
+      }
+
+      program.zenhubToken = token
+      readMissingProgram(program, cb)
+    })
+  }
+
+  cb(null, program)
+}
