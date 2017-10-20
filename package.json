@@ -1,6 +1,6 @@
 {
   "name": "pivotal-to-zenhub",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Transfers issues from Pivotal to ZenHub",
   "main": "lib/index.js",
   "homepage": "https://github.com/gaboesquivel/pivotal-to-zenhub",
@@ -25,7 +25,7 @@
     "lodash": "^3.10.1",
     "octokat": "^0.4.15",
     "p-all": "^1.0.0",
-    "pivotaltracker": "gaboesquivel/pivotaltracker#pagination",
+    "pivotaltracker": "gaboesquivel/pivotaltracker#fix-pagination",
     "progress": "^1.1.8",
     "read": "^1.0.7",
     "request": "^2.83.0",
