@@ -4,7 +4,6 @@ pivotal-to-zenhub
 [![npm downloads total](https://img.shields.io/npm/dt/pivotal-to-zenhub.svg)](https://www.npmjs.com/package/pivotal-to-zenhub)
 [![npm version](https://img.shields.io/npm/v/pivotal-to-zenhub.svg)](https://www.npmjs.com/package/pivotal-to-zenhub)
 ![license](https://img.shields.io/npm/l/pivotal-to-zenhub.svg)
-[![Code Climate](https://codeclimate.com/github/yamadapc/pivotal-to-zenhub/badges/gpa.svg)](https://codeclimate.com/github/yamadapc/pivotal-to-zenhub)
 - - -
 Transfers issues from Pivotal to ZenHub.
 
